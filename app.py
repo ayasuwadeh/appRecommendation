@@ -1,5 +1,4 @@
 from werkzeug.serving import WSGIRequestHandler
-
 from flask import Flask, request, jsonify
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
@@ -10,28 +9,23 @@ from nltk.corpus import stopwords
 import sklearn
 import re , math
 from collections import Counter
-from sklearn.metrics.pairwise import cosine_similarity
 import operator
 
 
 app = Flask(__name__)
 
 
-@app.route('/api', methods=['GET'])
-def hello_world():
-    user_input = request.args['QUERY']
+@app.route('/similarPlaces', methods=['GET'])
+def similar_places():
+    user_input = request.args['ID']
     user_input = int(user_input)
-    print(user_input)
-    rrr = "hi from here"
-    print(type(user_input))
+    # print(user_input)
     ds = pd.read_csv('C:\\Users\\Msys\\Desktop\\grad.csv', encoding='cp1252',
                      )
     ds['description'] = ds['description'] + ds['review']
     tf = TfidfVectorizer(analyzer='word', ngram_range=(1, 3), min_df=0, stop_words='english')
     tfidf_matrix = tf.fit_transform(ds['description'])
-    # print(tfidf_matrix)
     cosine_similarities = linear_kernel(tfidf_matrix, tfidf_matrix)
-    # print(cosine_similarities)
     results = {}
 
     for idx, row in ds.iterrows():
@@ -42,24 +36,21 @@ def hello_world():
     def item(id):
         return ds.loc[ds['id'] == id]['name'].tolist()[0].split(' - ')[0]
 
-    bb = {}
+    result = []
 
-    r = []
-
-    def recommend(item_id, num):
-        print("Recommending " + str(num) + " products similar to " + str(item_id) + "...")
+    def recommend(place_id, num):
+        print("Recommending " + str(num) + " places similar to " + str(place_id) + "...")
         print("-------")
-        recs = results[item_id][:num]
-        # print(recs)
+        recs = results[place_id][:num]
         for rec in recs:
             print("Recommended: " + str(rec[1]) + " (score:" + str(rec[0]) + ")")
-            r.append(rec[1].item())
+            result.append(rec[1].item())
 
-    recommend(item_id=user_input, num=10)
+    recommend(place_id=user_input, num=10)
+
     resultDF = pd.DataFrame(columns=('id', 'name', 'lat', 'lng', 'formatted_address', 'phone',
                                      'url', 'rate', 'description', 'image', 'category'))
-    for place in r:
-        # index = place['id']
+    for place in result:
         resultDF = resultDF.append(
             {'id': ds.iloc[place]['id'],
              'name': ds.iloc[place]['name'],
@@ -80,15 +71,10 @@ def hello_world():
     json_result = json.dumps(resultDF.to_dict('records'))
     return json_result
 
-# @app.route('/restaurants')
-# def hi():
-#     return 'Hello World!'
-
 
 @app.route('/restaurants', methods=['GET'])
 def restaurants():
     user_input = request.args['keywords']
-    print(user_input)
 
     # df = pd.read_csv('C:\\Users\Msys\\Desktop\\restaurants.csv',encoding='cp437', usecols=['id', 'name' ,'city', 'cuisine','rating'])
     # df.dropna(subset=['cuisine'])
@@ -155,7 +141,7 @@ def restaurants():
             resultDF = resultDF.append({'id': df.iloc[i[0]]['id'], 'name': df.iloc[i[0]]['name'], 'description': df.iloc[i[0]]['cuisine'],'rating': df.iloc[i[0]]['rating'], 'score': i[1]}, ignore_index=True)
             counter += 1
 
-            if counter > 10:
+            if counter > 20:
                 break
 
         json_result = json.dumps(resultDF.to_dict('records'))
@@ -168,6 +154,9 @@ def restaurants():
 
 @app.route('/places', methods=['GET'])
 def places():
+    user_input = request.args['keywords']
+    print(user_input)
+
     # df = pd.read_csv('C:\\Users\Msys\\Desktop\\grad.csv',encoding='cp437', )
     # df['description'] = df['description'] + df['review']
     #
@@ -242,16 +231,17 @@ def places():
                  'score': i[1]}, ignore_index=True)
             counter += 1
 
-            if counter > 5:
+            if counter > 20:
                 break
 
         json_result = json.dumps(resultDF.to_dict('records'))
 
         return json_result
 
-    json_object = get_recommendations('museum')
+    json_object = get_recommendations(user_input)
 
     return json_object
+
 
 @app.route('/cities', methods=['GET'])
 def city():
