@@ -20,7 +20,7 @@ def similar_places():
     user_input = request.args['ID']
     user_input = int(user_input)
     # print(user_input)
-    ds = pd.read_csv('C:\\Users\\Msys\\Desktop\\grad.csv', encoding='cp1252',
+    ds = pd.read_csv('grad.csv',
                      )
     ds['description'] = ds['description'] + ds['review']
     tf = TfidfVectorizer(analyzer='word', ngram_range=(1, 3), min_df=0, stop_words='english')
