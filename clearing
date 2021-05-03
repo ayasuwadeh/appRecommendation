@@ -1,0 +1,92 @@
+
+   #-------places--------#
+    # df = pd.read_csv('C:\\Users\Msys\\Desktop\\grad.csv',encoding='cp437', )
+    # df['description'] = df['description'] + df['review']
+    #
+    # df.dropna(subset=['description'])
+    # df = df[df['description'].notna()]
+    #
+    # def clear(city):
+    #     city = city.lower()
+    #     city = city.split()
+    #     city_keywords = [word for word in city if word not in stopwords.words('english')]
+    #     merged_city = " ".join(city_keywords)
+    #     return merged_city
+    #
+    # for index, row in df.iterrows():
+    #     clear_desc = clear(row['description'])
+    #     df.at[index, 'description'] = clear_desc
+    #
+    # updated_dataset = df.to_csv('places_data_cleared.csv')
+
+
+    #-----similar rests--------#
+        df = pd.read_csv('C:\\Users\Msys\\Desktop\\restaurants.csv', encoding='cp437', usecols={'id', 'name', 'city',
+                                                                                            'Reviews', 'rating'})
+    df = df[df.Reviews != '[[], []]']
+
+    for index, row in df.iterrows():
+        s = (row['Reviews'].split('], [')[0])
+
+        # s = row['Reviews'].replace("'", '')
+        # s = s.replace('"', '')
+        # s = s.replace(',', '')
+        # s = s.replace('[', '')
+        # s = s.replace(']', '')
+        # if s == '':
+        #     df.dropna(df.at[index])
+        df.at[index, 'Reviews'] = s
+
+    for index, row in df.iterrows():
+        s = row['Reviews'].replace("'", '')
+        s = s.replace('"', '')
+        s = s.replace(',', '')
+        s = s.replace('[', '')
+        s = s.replace(']', '')
+        df.at[index, 'Reviews'] = s
+        df.at[index, 'id'] = index
+
+
+    # df.dropna(subset=['Reviews'])
+    # df = df[df['Reviews'].notna()]
+
+    def clear(city):
+        city = city.lower()
+        city = city.split()
+        city_keywords = [word for word in city if word not in stopwords.words('english')]
+        merged_city = " ".join(city_keywords)
+        return merged_city
+
+    for index, row in df.iterrows():
+        clear_desc = clear(row['Reviews'])
+        df.at[index, 'Reviews'] = clear_desc
+
+    updated_dataset = df.to_csv('restaurants_Reviews_cleared.csv')
+
+
+    #----rests------#
+        # df = pd.read_csv('C:\\Users\Msys\\Desktop\\restaurants.csv',encoding='cp437', usecols=['id', 'name' ,'city', 'cuisine','rating'])
+    # df.dropna(subset=['cuisine'])
+    # df = df[df['cuisine'].notna()]
+    #
+    # for index, row in df.iterrows():
+    #     s = row['cuisine'].replace("'", '')
+    #     s = s.replace('[', '')
+    #     s = s.replace(']', '')
+    #     df.at[index, 'cuisine'] = s
+    #
+    # def clear(city):
+    #     city = city.lower()
+    #     city = city.split()
+    #     city_keywords = [word for word in city if word not in stopwords.words('english')]
+    #     merged_city = " ".join(city_keywords)
+    #     return merged_city
+    #
+    # for index, row in df.iterrows():
+    #     clear_desc = clear(row['cuisine'])
+    #     df.at[index, 'cuisine'] = clear_desc
+    #
+    # updated_dataset = df.to_csv('restaurants_data_cleared.csv')
+    #
+    # # df.head()
+
