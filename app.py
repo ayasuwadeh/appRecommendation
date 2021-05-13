@@ -4,7 +4,7 @@ import similar_rests
 import rests
 import places
 import cities
-
+import collaborative_restaurants
 app = Flask(__name__)
 
 
@@ -40,5 +40,12 @@ def cities_app():
     return cities.cities_fun(user_input_app)
 
 
+@app.route('/similar_bookmarks_api', methods=['GET'])
+def similar_bookmarks_app():
+    user_input_app = request.args['ID']
+    user_input_app = user_input_app
+    return collaborative_restaurants.similar_bookmarks(user_input_app)
+
+
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=False)

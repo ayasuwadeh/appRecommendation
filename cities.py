@@ -8,7 +8,6 @@ import pandas as pd
 
 
 def cities_fun(user_input):
-
     def cosine_similarity_of(text1, text2):
         first = re.compile(r"[\w']+").findall(text1)
         second = re.compile(r"[\w']+").findall(text2)
@@ -51,7 +50,10 @@ def cities_fun(user_input):
                                         'score': i[1]}, ignore_index=True)
             counter += 1
 
-            if i[1]<0.09:
+            if keywords != '':
+                if i[1] < 0.09:
+                    break
+            elif counter > 21:
                 break
 
         json_result = json.dumps(resultDF.to_dict('records'))
