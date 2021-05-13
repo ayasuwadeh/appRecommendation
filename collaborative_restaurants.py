@@ -11,6 +11,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 
 def similar_bookmarks(user_input):
+    print(user_input)
     headers = {'accept': 'application/json',
                }
     response = requests.get('http://127.0.0.1:8000/api/find-all-restaurants-bookmark', headers=headers)
@@ -38,7 +39,7 @@ def similar_bookmarks(user_input):
 
     model_knn = NearestNeighbors(metric='cosine', algorithm='brute')
     model_knn.fit(mat_movie_features)
-
+    print(model_knn)
     distances, indices = model_knn.kneighbors(df_movie_features.loc[user_input, :].values.reshape(1, -1), n_neighbors=5)
     movie = []
     distance = []
@@ -54,11 +55,11 @@ def similar_bookmarks(user_input):
     recommend = recommend.sort_values('distance', ascending=False)
     resultDF = pd.DataFrame(columns=('id', 'name', 'city', 'country', 'rating', 'image'))
 
-    print('Recommendations for {0}:\n'.format(df_movie_features.index[2]))
+    # print('Recommendations for {0}:\n'.format(df_movie_features.index[2]))
     for i in range(0, recommend.shape[0]):
         rowValue = df.loc[df['id'] == recommend["movie"].iloc[i]]
         resultDF = resultDF.append(rowValue, ignore_index=False)
-        print('{0}: {1}, with distance of {2}'.format(i, recommend["movie"].iloc[i], recommend["distance"].iloc[i]))
+        # print('{0}: {1}, with distance of {2}'.format(i, recommend["movie"].iloc[i], recommend["distance"].iloc[i]))
 
     json_result = json.dumps(resultDF.to_dict('records'))
 
