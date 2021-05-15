@@ -46,13 +46,14 @@ def similar_bookmarks(user_input):
 
     for i in range(0, len(distances.flatten())):
         if i != 0:
-            movie.append(df_movie_features.index[indices.flatten()[i]])
-            distance.append(distances.flatten()[i])
+            if distances.flatten()[i] != 0:
+                movie.append(df_movie_features.index[indices.flatten()[i]])
+                distance.append(distances.flatten()[i])
 
     m = pd.Series(movie, name='movie')
     d = pd.Series(distance, name='distance')
     recommend = pd.concat([m, d], axis=1)
-    recommend = recommend.sort_values('distance', ascending=False)
+    recommend = recommend.sort_values('distance', ascending=True)
     resultDF = pd.DataFrame(columns=('id', 'name', 'city', 'country', 'rating', 'image'))
 
     # print('Recommendations for {0}:\n'.format(df_movie_features.index[2]))

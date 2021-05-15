@@ -5,6 +5,7 @@ import rests
 import places
 import cities
 import collaborative_restaurants
+import ocr
 app = Flask(__name__)
 
 
@@ -45,6 +46,13 @@ def similar_bookmarks_app():
     user_input_app = request.args['ID']
     user_input_app = user_input_app
     return collaborative_restaurants.similar_bookmarks(user_input_app)
+
+
+@app.route('/ocr', methods=['GET'])
+def ocr_feature_app():
+    user_input_app = request.args['path']
+    user_input_app = user_input_app
+    return ocr.detect_text(user_input_app)
 
 
 if __name__ == '__main__':

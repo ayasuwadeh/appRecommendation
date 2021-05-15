@@ -1,5 +1,5 @@
-from werkzeug.serving import WSGIRequestHandler
-from flask import Flask, request, jsonify
+# from werkzeug.serving import WSGIRequestHandler
+# from flask import Flask, request, jsonify
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
 import json
